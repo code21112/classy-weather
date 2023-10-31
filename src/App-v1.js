@@ -85,7 +85,11 @@ class App extends React.Component {
     weather: {},
   };
 
-  fetchWeather = async () => {
+  constructor(props) {
+    super(props);
+    this.fetchWeather = this.fetchWeather.bind(this);
+  }
+  async fetchWeather(location) {
     try {
       this.setState({ isLoading: true });
       // 1) Getting location (geocoding)
@@ -118,7 +122,7 @@ class App extends React.Component {
       //   this.setState({ isLoading: false });
       // }, 500);
     }
-  };
+  }
 
   render() {
     return (
