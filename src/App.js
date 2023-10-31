@@ -120,13 +120,15 @@ class App extends React.Component {
     }
   };
 
+  setLocation = (e) => this.setState({ location: e.target.value });
+
   render() {
     return (
       <div className="app">
         <h1>Classy-weather</h1>
         <Input
           location={this.state.location}
-          setState={(e) => this.setState({ location: e.target.value })}
+          onChangeLocation={this.setLocation}
         />
         <button className="input" onClick={this.fetchWeather}>
           Get weather
@@ -154,7 +156,7 @@ class Input extends React.Component {
           type="text"
           placeholder="Search for location"
           value={this.props.location}
-          onChange={this.props.setState}
+          onChange={this.props.onChangeLocation}
         />
       </div>
     );
