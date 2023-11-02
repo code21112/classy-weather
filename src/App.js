@@ -79,13 +79,14 @@ async function getWeather(location) {
 
 class App extends React.Component {
   state = {
-    location: "Lisbon",
+    location: "",
     isLoading: false,
     displayLocation: "",
     weather: {},
   };
 
   fetchWeather = async () => {
+    if (this.state.location.length < 2) return this.setState({ weather: {} });
     try {
       this.setState({ isLoading: true });
       // 1) Getting location (geocoding)
@@ -111,7 +112,7 @@ class App extends React.Component {
       console.log(weatherData.daily);
       this.setState({ weather: weatherData.daily });
     } catch (err) {
-      console.err(err);
+      console.error(err);
     } finally {
       this.setState({ isLoading: false });
       // setTimeout(() => {
@@ -122,6 +123,23 @@ class App extends React.Component {
 
   setLocation = (e) => this.setState({ location: e.target.value });
 
+  // Equivalent to useEffect []
+  componentDidMount() {
+    // this.fetchWeather();
+    this.setState({ location: localStorage.getItem("location") });
+  }
+
+  // Equivalent to useEffect [location]
+  componentDidUpdate(prevProps, prevState) {
+    if (this.state.location !== prevState.location) {
+      // setTimeout(() => {
+      //   this.fetchWeather();
+      // }, 800);
+      this.fetchWeather();
+      localStorage.setItem("location", this.state.location || "");
+    }
+  }
+
   render() {
     return (
       <div className="app">
@@ -130,9 +148,9 @@ class App extends React.Component {
           location={this.state.location}
           onChangeLocation={this.setLocation}
         />
-        <button className="input" onClick={this.fetchWeather}>
+        {/* <button className="input" onClick={this.fetchWeather}>
           Get weather
-        </button>
+        </button> */}
         {this.state.isLoading && <p className="loader">Loading...</p>}
         {this.state.displayLocation}
         {this.state.weather.weathercode && (
@@ -164,6 +182,10 @@ class Input extends React.Component {
 }
 
 class Weather extends React.Component {
+  componentWillUnmount() {
+    console.log("Weather is unmounting");
+  }
+
   render() {
     const {
       temperature_2m_max: max,
@@ -173,7 +195,7 @@ class Weather extends React.Component {
     } = this.props.weather;
     return (
       <div>
-        <h2>Weather {this.props.location}</h2>
+        {/* <h2>Weather {this.props.location}</h2> */}
         <ul className="weather">
           {dates.map((date, index) => (
             <Day
